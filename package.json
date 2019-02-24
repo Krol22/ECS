@@ -1,6 +1,6 @@
 {
   "name": "@krol22/paula",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Paula - javascript entity component system",
   "main": "dist/index.js",
   "keywords": [
