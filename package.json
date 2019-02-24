@@ -1,5 +1,5 @@
 {
-  "name": "paula",
+  "name": "@krol22/paula",
   "version": "0.0.1",
   "description": "Paula - javascript entity component system",
   "main": "dist/index.js",
