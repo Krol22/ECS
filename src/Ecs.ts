@@ -2,9 +2,12 @@ import EventAggregator from './EventAggregator';
 
 import { EcsEntity } from './EcsEntity';
 import { EcsSystem } from './EcsSystem';
+import EcsStateManager from './EcsStateManager';
 
 export class ECS {
     private isRunning: boolean = false;
+    private debugging: boolean = false;
+    private ecsStateManager: EcsStateManager;
 
     private entities: Array<EcsEntity> = [];
     private systems: Array<EcsSystem> = [];
@@ -12,8 +15,13 @@ export class ECS {
 
     private afterUpdateEvents: Array<Function> = [];
 
-    constructor() {
+    constructor(options: any = {}) {
+
         this._subscribe();
+
+        const { debugging } = options;
+        this.debugging = debugging;
+        this.ecsStateManager = new EcsStateManager(this);
     }
 
     update (delta: number) {
@@ -22,6 +30,7 @@ export class ECS {
             system.tick(delta);
         });
         this._afterSystemsUpdate();
+        this.ecsStateManager.saveState();
         this._removeMarkedEntities();
     }
 

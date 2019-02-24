@@ -33,9 +33,19 @@ describe('EcsEntity', () => {
 
         it('should throw an error when entity doesn\'t have component', () => {
             let ecsEntity = new EcsEntity(fakeComponents);
+            ecsEntity.id = 'testId';
 
-            expect(() => { ecsEntity.getComponent('no-component'); }).toThrowError('Entity with id:  doesn\'t have component: no-component');
+            expect(() => { ecsEntity.getComponent('no-component'); }).toThrowError('Entity with id: testId doesn\'t have component: no-component');
         });
     });
+
+    describe('markForRemove', () => {
+        it('should mark entity to for remove', () => {
+            let ecsEntity = new EcsEntity(fakeComponents);
+
+            expect(ecsEntity.shouldBeRemoved()).toBe(false);
+        });
+    });
+
 });
 

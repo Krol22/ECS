@@ -1,4 +1,5 @@
 import { EcsSystem } from './EcsSystem';
+import { ECS } from './Ecs';
 
 export * from './Ecs';
 export * from './EcsComponent';
