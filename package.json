@@ -1,8 +1,9 @@
 {
   "name": "@krol22/paula",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Paula - javascript entity component system",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "ecs",
     "entity component system"
@@ -51,7 +52,7 @@
   },
   "license": "ISC",
   "scripts": {
-    "build": "npm run build:prod",
+    "build": "tsc",
     "build:dev": "webpack --mode development --config ./webpack.config.js --progress --color --display-error-details",
     "build:prod": "cross-env NODE_ENV=production webpack --mode production --config ./webpack.config.js  --progress  --color --display-error-details --bail",
     "clean": "npm cache clear && rimraf -- dist",

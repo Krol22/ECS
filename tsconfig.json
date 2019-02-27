@@ -5,11 +5,12 @@
     "declaration": true,
     "sourceMap": true,
     "experimentalDecorators": true,
-    "outDir": "dist",
+    "outDir": "./dist",
     "lib": ["es2017", "dom"],
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "removeComments": true
   },
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"],
+  "exclude": ["node_modules", "**/**.spec.ts", "dist"]
 }

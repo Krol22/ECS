@@ -2,8 +2,11 @@ import EventAggregator from './EventAggregator';
 
 import { EcsEntity } from './EcsEntity';
 import { EcsSystem } from './EcsSystem';
+import EcsStateManager from './EcsStateManager';
 
 export class ECS {
+    private debugging: boolean = false;
+    private ecsStateManager: EcsStateManager;
     private isRunning: boolean = false;
 
     private entities: Array<EcsEntity> = [];
@@ -12,16 +15,30 @@ export class ECS {
 
     private afterUpdateEvents: Array<Function> = [];
 
-    constructor() {
+    /* Debugging properties */
+    private isPaused: boolean = false;
+    private loadedFrameOffset: number = 0;
+
+    constructor(options: any = {}) {
         this._subscribe();
+
+        const { debugging } = options;
+        this.debugging = debugging;
+        this.ecsStateManager = new EcsStateManager(this);
     }
 
     update (delta: number) {
         this.isRunning = true;
+
+        if (this.isPaused) {
+            return;
+        }
+
         this.systems.forEach((system) => {
             system.tick(delta);
         });
         this._afterSystemsUpdate();
+        this.ecsStateManager.saveState(delta);
         this._removeMarkedEntities();
     }
 
@@ -47,8 +64,58 @@ export class ECS {
         this._runOrPushToAfterUpdateStack(this._removeSystem, systemId);
     }
 
+    /* Debugging interface */
+    loadNextFrame() {
+        this.loadedFrameOffset = this.loadedFrameOffset === -1 ? -1 : this.loadedFrameOffset - 1;
+        this._restoreFromState(this.loadedFrameOffset);
+    }
+
+    loadPrevFrame() {
+        const { numberOfSavedStates } = this.ecsStateManager;
+        this.loadedFrameOffset = this.loadedFrameOffset >= numberOfSavedStates
+            ? this.loadedFrameOffset = numberOfSavedStates
+            : this.loadedFrameOffset += 1;
+
+        this._restoreFromState(this.loadedFrameOffset);
+    }
+
+    togglePause() {
+        this.isPaused = !this.isPaused;
+    }
+
     // importStateFromJSON() { }
     // exportStateToJSON() { }
+
+    _restoreFromState(stateNumber: number) {
+        this.isRunning = false;
+
+        // Restore state
+        const state: any = this.ecsStateManager.getState(stateNumber);
+        if (!state || !Object.keys(state.entities).length) {
+            return;
+        }
+
+        // Restore entities,
+        this.entities = [];
+        Object.keys(state.entities).forEach(key => {
+            const entity = new EcsEntity(JSON.parse(JSON.stringify(state.entities[key].components)));
+            entity.id = state.entities[key].id;
+            this.entities.push(entity);
+        });
+        this.systems.forEach(system => {
+            system.setEntities(this.entities);
+        });
+
+        // Allow ecs to update once;
+        if (stateNumber !== -1) {
+            this.systems.forEach((system) => {
+                system.tick(state.delta);
+            });
+            this._afterSystemsUpdate();
+        }
+
+        this.isRunning = true;
+    }
 
     private _runOrPushToAfterUpdateStack(callback: Function, ...args: any[]) {
         callback = callback.bind(this);
