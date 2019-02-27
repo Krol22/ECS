@@ -1,17 +1,25 @@
 import { EcsEntity } from './EcsEntity';
 import { EcsSystem } from './EcsSystem';
 export declare class ECS {
+    private debugging;
+    private ecsStateManager;
     private isRunning;
     private entities;
     private systems;
     private inactiveSystems;
     private afterUpdateEvents;
-    constructor();
+    private isPaused;
+    private loadedFrameOffset;
+    constructor(options?: any);
     update(delta: number): void;
     addEntity(newEntity: EcsEntity): string;
     removeEntity(entityId: string): void;
     addSystem(newSystem: any): any;
     removeSystem(systemId: string): void;
+    loadNextFrame(): void;
+    loadPrevFrame(): void;
+    togglePause(): void;
+    _restoreFromState(stateNumber: number): void;
     private _runOrPushToAfterUpdateStack;
     private _addSystem;
     private _removeSystem;

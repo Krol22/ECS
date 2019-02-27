@@ -5,7 +5,7 @@ import { EcsSystem } from './EcsSystem';
 import EcsStateManager from './EcsStateManager';
 
 export class ECS {
-    private debugging: boolean = false;
+    // private debugging: boolean = false;
     private ecsStateManager: EcsStateManager;
     private isRunning: boolean = false;
 
@@ -16,29 +16,29 @@ export class ECS {
     private afterUpdateEvents: Array<Function> = [];
 
     /* Debugging properties */
-    private isPaused: boolean = false;
-    private loadedFrameOffset: number = 0;
+    // private isPaused: boolean = false;
+    // private loadedFrameOffset: number = 0;
 
     constructor(options: any = {}) {
         this._subscribe();
 
-        const { debugging } = options;
-        this.debugging = debugging;
+        // const { debugging } = options;
+        // this.debugging = debugging;
         this.ecsStateManager = new EcsStateManager(this);
     }
 
     update (delta: number) {
         this.isRunning = true;
 
-        if (this.isPaused) {
-            return;
-        }
+        // if (this.isPaused) {
+        //     return;
+        // }
 
         this.systems.forEach((system) => {
             system.tick(delta);
         });
         this._afterSystemsUpdate();
-        this.ecsStateManager.saveState(delta);
+        // this.ecsStateManager.saveState(delta);
         this._removeMarkedEntities();
     }
 
@@ -65,23 +65,23 @@ export class ECS {
     }
 
     /* Debugging interface */
-    loadNextFrame() {
-        this.loadedFrameOffset = this.loadedFrameOffset === -1 ? -1 : this.loadedFrameOffset - 1;
-        this._restoreFromState(this.loadedFrameOffset);
-    }
+    // loadNextFrame() {
+    //     this.loadedFrameOffset = this.loadedFrameOffset === -1 ? -1 : this.loadedFrameOffset - 1;
+    //     this._restoreFromState(this.loadedFrameOffset);
+    // }
 
-    loadPrevFrame() {
-        const { numberOfSavedStates } = this.ecsStateManager;
-        this.loadedFrameOffset = this.loadedFrameOffset >= numberOfSavedStates
-            ? this.loadedFrameOffset = numberOfSavedStates
-            : this.loadedFrameOffset += 1;
+    // loadPrevFrame() {
+    //     const { numberOfSavedStates } = this.ecsStateManager;
+    //     this.loadedFrameOffset = this.loadedFrameOffset >= numberOfSavedStates
+    //         ? this.loadedFrameOffset = numberOfSavedStates
+    //         : this.loadedFrameOffset += 1;
 
-        this._restoreFromState(this.loadedFrameOffset);
-    }
+    //     this._restoreFromState(this.loadedFrameOffset);
+    // }
 
-    togglePause() {
-        this.isPaused = !this.isPaused;
-    }
+    // togglePause() {
+    //     this.isPaused = !this.isPaused;
+    // }
 
     // importStateFromJSON() { }
     // exportStateToJSON() { }
