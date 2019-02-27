@@ -1,37 +1,35 @@
 import { ECS } from "./Ecs";
 
-interface IAppState {
-    date: Date,
-    entities: Object,
-}
-
 class EcsStateManager {
-    public numberOfSavedStates: number = 3;
+    public numberOfSavedStates: number = 10;
     private lastEcsStates: Object[] = [];
 
     constructor(private ecs: ECS) {}
 
-    saveState() {
-        const newState = this._createStateFromEcs();
+    saveState(delta: number) {
+        const newState = this._createStateFromEcs(delta);
 
         this.lastEcsStates.push(newState);
 
-        if (this.lastEcsStates.length > this.numberOfSavedStates) {
-            this.lastEcsStates.splice(1, this.lastEcsStates.length);
+        if (this.lastEcsStates.length > this.numberOfSavedStates + 1) {
+            this.lastEcsStates = this.lastEcsStates.slice(1, this.lastEcsStates.length);
         }
 
-        console.log(this.lastEcsStates);
-        debugger;
     }
 
-    private _createStateFromEcs() {
+    getState(stateNumber: number) {
+        return this.lastEcsStates[this.lastEcsStates.length - stateNumber - 2];
+    }
+
+    private _createStateFromEcs(delta: number) {
         let state = {
             date: new Date(),
             entities: {},
+            delta,
         };
         const entities = this.ecs.__getEntities();
         entities.forEach(entity => {
-            state.entities[entity.id] = entity;
+            state.entities[entity.id] = JSON.parse(JSON.stringify(entity));
         });
 
         return state;
