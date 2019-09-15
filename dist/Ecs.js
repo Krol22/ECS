@@ -5,29 +5,20 @@ const EcsEntity_1 = require("./EcsEntity");
 const EcsStateManager_1 = require("./EcsStateManager");
 class ECS {
     constructor(options = {}) {
-        this.debugging = false;
         this.isRunning = false;
         this.entities = [];
         this.systems = [];
         this.inactiveSystems = [];
         this.afterUpdateEvents = [];
-        this.isPaused = false;
-        this.loadedFrameOffset = 0;
         this._subscribe();
-        const { debugging } = options;
-        this.debugging = debugging;
         this.ecsStateManager = new EcsStateManager_1.default(this);
     }
     update(delta) {
         this.isRunning = true;
-        if (this.isPaused) {
-            return;
-        }
         this.systems.forEach((system) => {
             system.tick(delta);
         });
         this._afterSystemsUpdate();
-        this.ecsStateManager.saveState(delta);
         this._removeMarkedEntities();
     }
     addEntity(newEntity) {
@@ -45,20 +36,6 @@ class ECS {
     }
     removeSystem(systemId) {
         this._runOrPushToAfterUpdateStack(this._removeSystem, systemId);
-    }
-    loadNextFrame() {
-        this.loadedFrameOffset = this.loadedFrameOffset === -1 ? -1 : this.loadedFrameOffset - 1;
-        this._restoreFromState(this.loadedFrameOffset);
-    }
-    loadPrevFrame() {
-        const { numberOfSavedStates } = this.ecsStateManager;
-        this.loadedFrameOffset = this.loadedFrameOffset >= numberOfSavedStates
-            ? this.loadedFrameOffset = numberOfSavedStates
-            : this.loadedFrameOffset += 1;
-        this._restoreFromState(this.loadedFrameOffset);
-    }
-    togglePause() {
-        this.isPaused = !this.isPaused;
     }
     _restoreFromState(stateNumber) {
         this.isRunning = false;
