@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const EventAggregator_1 = require("./EventAggregator");
-const EcsEntity_1 = require("./EcsEntity");
-const EcsStateManager_1 = require("./EcsStateManager");
-class ECS {
-    constructor(options = {}) {
+var EventAggregator_1 = require("./EventAggregator");
+var EcsEntity_1 = require("./EcsEntity");
+var EcsStateManager_1 = require("./EcsStateManager");
+var ECS = (function () {
+    function ECS(options) {
+        if (options === void 0) { options = {}; }
         this.isRunning = false;
         this.entities = [];
         this.systems = [];
@@ -13,78 +14,83 @@ class ECS {
         this._subscribe();
         this.ecsStateManager = new EcsStateManager_1.default(this);
     }
-    update(delta) {
+    ECS.prototype.update = function (delta) {
         this.isRunning = true;
-        this.systems.forEach((system) => {
+        this.systems.forEach(function (system) {
             system.tick(delta);
         });
         this._afterSystemsUpdate();
         this._removeMarkedEntities();
-    }
-    addEntity(newEntity) {
+    };
+    ECS.prototype.addEntity = function (newEntity) {
         newEntity.id = this._nextId();
         this._runOrPushToAfterUpdateStack(this._addEntity, newEntity);
         return newEntity.id;
-    }
-    removeEntity(entityId) {
+    };
+    ECS.prototype.removeEntity = function (entityId) {
         this._runOrPushToAfterUpdateStack(this._removeEntity, entityId);
-    }
-    addSystem(newSystem) {
+    };
+    ECS.prototype.addSystem = function (newSystem) {
         newSystem.id = this._nextId();
         this._runOrPushToAfterUpdateStack(this._addSystem, newSystem);
         return newSystem.id;
-    }
-    removeSystem(systemId) {
+    };
+    ECS.prototype.removeSystem = function (systemId) {
         this._runOrPushToAfterUpdateStack(this._removeSystem, systemId);
-    }
-    _restoreFromState(stateNumber) {
+    };
+    ECS.prototype._restoreFromState = function (stateNumber) {
+        var _this = this;
         this.isRunning = false;
-        const state = this.ecsStateManager.getState(stateNumber);
+        var state = this.ecsStateManager.getState(stateNumber);
         if (!state || !Object.keys(state.entities).length) {
             return;
         }
         this.entities = [];
-        Object.keys(state.entities).forEach(key => {
-            const entity = new EcsEntity_1.EcsEntity(JSON.parse(JSON.stringify(state.entities[key].components)));
+        Object.keys(state.entities).forEach(function (key) {
+            var entity = new EcsEntity_1.EcsEntity(JSON.parse(JSON.stringify(state.entities[key].components)));
             entity.id = state.entities[key].id;
-            this.entities.push(entity);
+            _this.entities.push(entity);
         });
-        this.systems.forEach(system => {
-            system.setEntities(this.entities);
+        this.systems.forEach(function (system) {
+            system.setEntities(_this.entities);
         });
         if (stateNumber !== -1) {
-            this.systems.forEach((system) => {
+            this.systems.forEach(function (system) {
                 system.tick(state.delta);
             });
             this._afterSystemsUpdate();
         }
         this.isRunning = true;
-    }
-    _runOrPushToAfterUpdateStack(callback, ...args) {
+    };
+    ECS.prototype._runOrPushToAfterUpdateStack = function (callback) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
         callback = callback.bind(this);
         if (!this.isRunning) {
-            callback(...args);
+            callback.apply(void 0, args);
         }
         else {
-            this.afterUpdateEvents.push(() => callback(...args));
+            this.afterUpdateEvents.push(function () { return callback.apply(void 0, args); });
         }
-    }
-    _addSystem(newSystem) {
+    };
+    ECS.prototype._addSystem = function (newSystem) {
         this.systems.push(newSystem);
-    }
-    _removeSystem(systemId) {
-        let systemIndex = this.systems.findIndex((system) => systemId === system.id);
+    };
+    ECS.prototype._removeSystem = function (systemId) {
+        var systemIndex = this.systems.findIndex(function (system) { return systemId === system.id; });
         if (!systemIndex) {
-            systemIndex = this.inactiveSystems.findIndex((system) => systemId === system.id);
+            systemIndex = this.inactiveSystems.findIndex(function (system) { return systemId === system.id; });
         }
         this.systems.splice(systemIndex, 1);
-    }
-    _addEntity(newEntity) {
+    };
+    ECS.prototype._addEntity = function (newEntity) {
         this.entities.push(newEntity);
         EventAggregator_1.default.publish('onCreateEntity', newEntity);
-    }
-    _removeEntity(entityId) {
-        let entityIndex = this.entities.findIndex((entity) => {
+    };
+    ECS.prototype._removeEntity = function (entityId) {
+        var entityIndex = this.entities.findIndex(function (entity) {
             return entity.id === entityId;
         });
         if (entityIndex < 0) {
@@ -92,48 +98,51 @@ class ECS {
         }
         this.entities.splice(entityIndex, 1);
         EventAggregator_1.default.publish('onRemoveEntity', entityId);
-    }
-    _afterSystemsUpdate() {
-        this.afterUpdateEvents.forEach((callback) => {
+    };
+    ECS.prototype._afterSystemsUpdate = function () {
+        this.afterUpdateEvents.forEach(function (callback) {
             callback();
         });
         this.afterUpdateEvents = [];
-    }
-    _nextId() {
+    };
+    ECS.prototype._nextId = function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
-    }
-    _subscribe() {
-        EventAggregator_1.default.subscribe('onDisableSystem', (systemId) => {
-            this._runOrPushToAfterUpdateStack(() => {
-                let systemIndex = this.systems.findIndex((system) => {
+    };
+    ECS.prototype._subscribe = function () {
+        var _this = this;
+        EventAggregator_1.default.subscribe('onDisableSystem', function (systemId) {
+            _this._runOrPushToAfterUpdateStack(function () {
+                var systemIndex = _this.systems.findIndex(function (system) {
                     return system.id === systemId;
                 });
-                this.inactiveSystems.push(this.systems[systemIndex]);
-                this.systems.splice(systemIndex, 1);
+                _this.inactiveSystems.push(_this.systems[systemIndex]);
+                _this.systems.splice(systemIndex, 1);
             });
         });
-        EventAggregator_1.default.subscribe('onEnableSystem', (systemId) => {
-            this._runOrPushToAfterUpdateStack(() => {
-                let systemIndex = this.inactiveSystems.findIndex((system) => {
+        EventAggregator_1.default.subscribe('onEnableSystem', function (systemId) {
+            _this._runOrPushToAfterUpdateStack(function () {
+                var systemIndex = _this.inactiveSystems.findIndex(function (system) {
                     return system.id === systemId;
                 });
-                this.systems.push(this.inactiveSystems[systemIndex]);
-                this.inactiveSystems.splice(systemIndex, 1);
+                _this.systems.push(_this.inactiveSystems[systemIndex]);
+                _this.inactiveSystems.splice(systemIndex, 1);
             });
         });
-    }
-    _removeMarkedEntities() {
-        const markedToRemoveEntities = this.entities.filter((entity) => entity.shouldBeRemoved());
-        markedToRemoveEntities.forEach((entity) => {
-            this.removeEntity(entity.id);
+    };
+    ECS.prototype._removeMarkedEntities = function () {
+        var _this = this;
+        var markedToRemoveEntities = this.entities.filter(function (entity) { return entity.shouldBeRemoved(); });
+        markedToRemoveEntities.forEach(function (entity) {
+            _this.removeEntity(entity.id);
         });
-    }
-    __getEntities() { return this.entities; }
-    __getSystems() { return this.systems; }
-    __getInactiveSystems() { return this.inactiveSystems; }
-}
+    };
+    ECS.prototype.__getEntities = function () { return this.entities; };
+    ECS.prototype.__getSystems = function () { return this.systems; };
+    ECS.prototype.__getInactiveSystems = function () { return this.inactiveSystems; };
+    return ECS;
+}());
 exports.ECS = ECS;
 //# sourceMappingURL=Ecs.js.map

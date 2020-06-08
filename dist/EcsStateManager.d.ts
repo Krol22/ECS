@@ -6,6 +6,6 @@ declare class EcsStateManager {
     constructor(ecs: ECS);
     saveState(delta: number): void;
     getState(stateNumber: number): Object;
-    private _createStateFromEcs;
+    private _createStateFromEcs(delta);
 }
 export default EcsStateManager;

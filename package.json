@@ -1,7 +1,7 @@
 {
-  "name": "@krol22/paula",
+  "name": "@krol22/ecs",
   "version": "0.1.2",
-  "description": "Paula - javascript entity component system",
+  "description": "Javascript entity component system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "keywords": [
@@ -9,10 +9,10 @@
     "entity component system"
   ],
   "author": "Karol Toruń <krol22ee@gmail.com>",
-  "homepage": "https://github.com/krol22/paula",
+  "homepage": "https://github.com/krol22/ECS",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/krol22/paula.git"
+    "url": "git+https://github.com/krol22/ECS.git"
   },
   "deprecated": false,
   "devDependencies": {

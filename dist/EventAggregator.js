@@ -1,16 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const EventAggregator = {
+var EventAggregator = {
     topics: {},
-    publish(eventName, ...args) {
+    publish: function (eventName) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
         if (!this.topics[eventName]) {
             return;
         }
-        this.topics[eventName].forEach((callback) => {
-            callback(...args);
+        this.topics[eventName].forEach(function (callback) {
+            callback.apply(void 0, args);
         });
     },
-    subscribe(eventName, callback) {
+    subscribe: function (eventName, callback) {
         if (!this.topics[eventName]) {
             this.topics[eventName] = [];
         }

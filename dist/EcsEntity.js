@@ -1,35 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 ;
-class EcsEntity {
-    constructor(components) {
+var EcsEntity = (function () {
+    function EcsEntity(components) {
+        var _this = this;
         this.id = '';
         this.remove = false;
         this.components = [];
         this.componentTypes = {};
         this.components = components;
-        this.components.forEach((component) => {
-            this.componentTypes[component._type] = true;
+        this.components.forEach(function (component) {
+            _this.componentTypes[component._type] = true;
         });
     }
-    markForRemove() {
+    EcsEntity.prototype.markForRemove = function () {
         this.remove = true;
-    }
-    shouldBeRemoved() {
+    };
+    EcsEntity.prototype.shouldBeRemoved = function () {
         return this.remove;
-    }
-    hasComponent(componentType) {
+    };
+    EcsEntity.prototype.hasComponent = function (componentType) {
         return !!this.componentTypes[componentType];
-    }
-    getComponent(componentType) {
-        let component = this.components.find((component) => {
+    };
+    EcsEntity.prototype.getComponent = function (componentType) {
+        var component = this.components.find(function (component) {
             return component._type === componentType;
         });
         if (!component) {
-            throw new Error(`Entity with id: ${this.id} doesn't have component: ${componentType}`);
+            throw new Error("Entity with id: " + this.id + " doesn't have component: " + componentType);
         }
         return component;
-    }
-}
+    };
+    return EcsEntity;
+}());
 exports.EcsEntity = EcsEntity;
 //# sourceMappingURL=EcsEntity.js.map

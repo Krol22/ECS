@@ -10,8 +10,8 @@ export declare abstract class EcsSystem {
     setIsActive(active: boolean): void;
     getIsActive(): boolean;
     setEntities(entities: Array<EcsEntity>): void;
-    private _isEntityForSystem;
-    private _subscribe;
+    private _isEntityForSystem(entity);
+    private _subscribe();
     __getComponentTypes(): string[];
     __getSystemEntities(): EcsEntity[];
 }
