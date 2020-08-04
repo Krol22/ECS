@@ -10,7 +10,7 @@ describe('EcsEntity', () => {
         expect(EcsEntity).toBeDefined();
     });
 
-    fdescribe('constructor', () => {
+    describe('constructor', () => {
         it ('should inject entity reference to each component method', () => {
             class FakeComponent extends EcsComponent {
                 constructor() {
