@@ -58,6 +58,15 @@ describe('EcsEntity', () => {
 
             expect(() => { ecsEntity.getComponent('no-component'); }).toThrowError('Entity with id: testId doesn\'t have component: no-component');
         });
+
+        it('should return array of components of same type if there is more than one', () => {
+            const ecsEntity = new EcsEntity([fakeComponents[0], fakeComponents[0]]);
+
+            const components = ecsEntity.getComponent('component1') as EcsComponent[];
+            expect(components.length).toBe(2);
+
+            expect(components[0]._type).toBe('component1');
+        });
     });
 
     describe('markForRemove', () => {

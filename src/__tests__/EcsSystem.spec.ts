@@ -89,5 +89,9 @@ describe('EcsSystem', () => {
                 expect(testInstance.__getSystemEntities().length).toBe(0);
             });
         });
+
+        describe('multiple components', () => {
+
+        });
     });
 });
