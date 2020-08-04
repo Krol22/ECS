@@ -10,6 +10,27 @@ describe('EcsEntity', () => {
         expect(EcsEntity).toBeDefined();
     });
 
+    describe('constructor', () => {
+        it ('should inject entity reference to each component method', () => {
+            class FakeComponent extends EcsComponent {
+                constructor() {
+                    super('FAKE');
+                }
+
+                testMethod() {
+                    return this;
+                }
+            }
+
+            const fakeComponent = new FakeComponent();
+            const ecsEntity: EcsEntity = new EcsEntity([fakeComponent]);
+            const fakeComponentInstance = ecsEntity.getComponent('FAKE') as FakeComponent;
+            const result = fakeComponentInstance.testMethod() as any;
+
+            expect(result).toBe(ecsEntity);
+        });
+    });
+
     describe('hasComponent', () => {
         it('should return true if entity has component with provided type', () => {
             let ecsEntity = new EcsEntity(fakeComponents);
@@ -36,6 +57,15 @@ describe('EcsEntity', () => {
             ecsEntity.id = 'testId';
 
             expect(() => { ecsEntity.getComponent('no-component'); }).toThrowError('Entity with id: testId doesn\'t have component: no-component');
+        });
+
+        it('should return array of components of same type if there is more than one', () => {
+            const ecsEntity = new EcsEntity([fakeComponents[0], fakeComponents[0]]);
+
+            const components = ecsEntity.getComponent('component1') as EcsComponent[];
+            expect(components.length).toBe(2);
+
+            expect(components[0]._type).toBe('component1');
         });
     });
 

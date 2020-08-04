@@ -90,13 +90,6 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@flyover/box2d@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@flyover/box2d/-/box2d-1.0.0.tgz#d4c2e734bfb253175bcfc40a415d13a0684b31d0"
-  integrity sha512-NRtnpFiACe6P6oW1TwJRNEfqvxecUDdguwzLhh+k9Zs5IS7/oV33vbpx8qRbQodKtjEnyZ51G9oxR0aqwcEv8w==
-  dependencies:
-    "@types/systemjs" "^0.20.6"
-
 "@types/jasmine@^2.5.53":
   version "2.8.16"
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.8.16.tgz#a6cb24b1149d65293bd616923500014838e14e7d"
@@ -111,11 +104,6 @@
   version "0.7.32"
   resolved "https://registry.yarnpkg.com/@types/p2/-/p2-0.7.32.tgz#dda9f5f6a84a2040b1a35ec887165971e8b99f48"
   integrity sha512-IsghBH4E5lXPoW45GGdsMvg8W0qmq9GB1MxtNk3Tkt0rV/2EujJsl8SXEII6TZpnRsb9MHQpxAg8XUVBkzJ+kQ==
-
-"@types/systemjs@^0.20.6":
-  version "0.20.6"
-  resolved "https://registry.yarnpkg.com/@types/systemjs/-/systemjs-0.20.6.tgz#79838d2b4bce9c014330efa0b4c7b9345e830a72"
-  integrity sha512-p3yv9sBBJXi3noUG216BpUI7VtVBUAvBIfZNTiDROUY31YBfsFHM4DreS7XMekN8IjtX0ysvCnm6r3WnirnNeA==
 
 "@webassemblyjs/ast@1.8.3":
   version "1.8.3"
