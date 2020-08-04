@@ -13,7 +13,7 @@ const injectEntityReference = (entity: EcsEntity, component: any) => {
         })
         .forEach((method: string) => {
             console.log(method);
-            component[method] = component[method].bind(entity);
+            component[method] = component[method].bind(component, entity);
         });
 
 };

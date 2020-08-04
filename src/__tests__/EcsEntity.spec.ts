@@ -17,8 +17,8 @@ describe('EcsEntity', () => {
                     super('FAKE');
                 }
 
-                testMethod() {
-                    return this;
+                testMethod(entity?: EcsEntity) {
+                    return entity;
                 }
             }
 
