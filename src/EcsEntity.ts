@@ -4,6 +4,20 @@ interface IComponentTypes {
     [key: string]: boolean
 };
 
+const injectEntityReference = (entity: EcsEntity, component: any) => {
+    Object
+        .getOwnPropertyNames(component.__proto__)
+        .filter((methodName: string) => methodName !== 'constructor')
+        .filter((method: string) => {
+            return typeof component[method] === 'function';
+        })
+        .forEach((method: string) => {
+            console.log(method);
+            component[method] = component[method].bind(entity);
+        });
+
+};
+
 export class EcsEntity {
     public id: string = '';
 
@@ -13,8 +27,10 @@ export class EcsEntity {
 
     constructor(components: EcsComponent[]) {
         this.components = components;
-        this.components.forEach((component: EcsComponent) => {
+        this.components.forEach((component: any) => {
             this.componentTypes[component._type] = true;
+
+            injectEntityReference(this, component);
         });
     }
 

@@ -10,6 +10,27 @@ describe('EcsEntity', () => {
         expect(EcsEntity).toBeDefined();
     });
 
+    fdescribe('constructor', () => {
+        it ('should inject entity reference to each component method', () => {
+            class FakeComponent extends EcsComponent {
+                constructor() {
+                    super('FAKE');
+                }
+
+                testMethod() {
+                    return this;
+                }
+            }
+
+            const fakeComponent = new FakeComponent();
+            const ecsEntity: EcsEntity = new EcsEntity([fakeComponent]);
+            const fakeComponentInstance = ecsEntity.getComponent('FAKE') as FakeComponent;
+            const result = fakeComponentInstance.testMethod() as any;
+
+            expect(result).toBe(ecsEntity);
+        });
+    });
+
     describe('hasComponent', () => {
         it('should return true if entity has component with provided type', () => {
             let ecsEntity = new EcsEntity(fakeComponents);
